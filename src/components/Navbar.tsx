@@ -6,12 +6,27 @@ import Link from "next/link";
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 40);
     window.addEventListener("scroll", h);
     return () => window.removeEventListener("scroll", h);
   }, []);
+
+  const links = [
+    { label: "Apps", href: "#apps" },
+    { label: "About", href: "#about" },
+    { label: "Privacy", href: "/privacy-policy" },
+    { label: "Support", href: "/support" },
+  ];
 
   return (
     <nav style={{
@@ -25,7 +40,7 @@ export default function Navbar() {
       <div style={{
         maxWidth: 1100, margin: "0 auto",
         display: "flex", justifyContent: "space-between", alignItems: "center",
-        height: 64, flexWrap: "wrap",
+        height: 64,
       }}>
         <Link href="/" style={{
           fontFamily: "'DM Serif Display', serif",
@@ -35,57 +50,52 @@ export default function Navbar() {
           Singh Digital Group
         </Link>
 
-        {/* Desktop links */}
-        <div style={{ display: "flex", gap: 32, alignItems: "center" }}
-          className="hidden md:flex">
-          {[
-            { label: "Apps", href: "#apps" },
-            { label: "About", href: "#about" },
-            { label: "Privacy", href: "/privacy-policy" },
-            { label: "Support", href: "/support" },
-          ].map(({ label, href }) => (
-            <a key={label} href={href} style={{
-              fontSize: "0.9rem", color: "#6b6760",
-              transition: "color 0.2s",
-            }}
-              onMouseEnter={e => (e.currentTarget.style.color = "#1a1814")}
-              onMouseLeave={e => (e.currentTarget.style.color = "#6b6760")}
-            >{label}</a>
-          ))}
-          <a href="https://play.google.com/store/apps/details?id=com.singhdigitalgroup.subhvichar"
-            target="_blank" rel="noopener noreferrer"
-            style={{
-              padding: "8px 20px", borderRadius: 100,
-              background: "#1a1814", color: "white",
-              fontSize: "0.85rem", fontWeight: 500,
-              transition: "opacity 0.2s",
-            }}
-            onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")}
-            onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
-          >Get App</a>
-        </div>
+        {/* Desktop links — hidden on mobile */}
+        {!isMobile && (
+          <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+            {links.map(({ label, href }) => (
+              <a key={label} href={href} style={{
+                fontSize: "0.9rem", color: "#6b6760",
+                transition: "color 0.2s",
+              }}
+                onMouseEnter={e => (e.currentTarget.style.color = "#1a1814")}
+                onMouseLeave={e => (e.currentTarget.style.color = "#6b6760")}
+              >{label}</a>
+            ))}
+            <a href="https://play.google.com/store/apps/details?id=com.singhdigitalgroup.subhvichar"
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                padding: "8px 20px", borderRadius: 100,
+                background: "#1a1814", color: "white",
+                fontSize: "0.85rem", fontWeight: 500,
+                transition: "opacity 0.2s",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.opacity = "0.8")}
+              onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+            >Get App</a>
+          </div>
+        )}
 
         {/* Mobile hamburger */}
-        <button
-          className="md:hidden"
-          onClick={() => setMenuOpen(v => !v)}
-          style={{ background: "none", border: "none", cursor: "pointer", fontSize: "1.3rem", color: "#1a1814" }}
-        >{menuOpen ? "✕" : "☰"}</button>
+        {isMobile && (
+          <button
+            onClick={() => setMenuOpen(v => !v)}
+            style={{
+              background: "none", border: "none", cursor: "pointer",
+              fontSize: "1.3rem", color: "#1a1814", padding: 4, lineHeight: 1,
+            }}
+          >{menuOpen ? "✕" : "☰"}</button>
+        )}
       </div>
 
-      {/* Mobile menu */}
-      {menuOpen && (
+      {/* Mobile dropdown */}
+      {isMobile && menuOpen && (
         <div style={{
           borderTop: "1px solid #e2ddd8", padding: "16px 24px 20px",
-          display: "flex", flexDirection: "column", gap: 0,
+          display: "flex", flexDirection: "column",
           background: "rgba(248,247,244,0.98)",
-        }} className="md:hidden">
-          {[
-            { label: "Apps", href: "#apps" },
-            { label: "About", href: "#about" },
-            { label: "Privacy", href: "/privacy-policy" },
-            { label: "Support", href: "/support" },
-          ].map(({ label, href }) => (
+        }}>
+          {links.map(({ label, href }) => (
             <a key={label} href={href} onClick={() => setMenuOpen(false)} style={{
               fontSize: "1rem", color: "#6b6760",
               padding: "13px 0", borderBottom: "1px solid #e2ddd8", display: "block",
