@@ -79,10 +79,10 @@ export default function Home() {
 
           {/* Stats row */}
           <div className="fade-up fade-up-5" style={{
-            display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+            display: "grid", gridTemplateColumns: "repeat(2, 1fr)",
             gap: 1, marginTop: 80, background: "var(--border)",
             borderRadius: 16, overflow: "hidden",
-            maxWidth: 600,
+            maxWidth: 600, width: "100%",
           }}>
             {[["203", "Quotes"], ["13", "Categories"], ["5", "Languages"], ["₹99", "Per Year"]].map(([num, label]) => (
               <div key={label} style={{
